@@ -1,3 +1,7 @@
+# File for uploading intraday stock data to excel along with technical indicators using Polygon Stocks API instead of
+# yfinance. Since PolygonStocks has API rate limits and only outputs a small maximum of data points for intraday data
+# I had to iteratively call the API to output a lot of data
+
 import requests
 import pandas as pd
 from datetime import datetime, timedelta
@@ -17,6 +21,7 @@ numDaysTo = 7
 
 datetime_start = datetime.strptime(from_date, date_format)
 
+# Function for changing my data originally set to hourly data to quarterly data
 def change():
     global from_date
     global to_date
@@ -34,6 +39,7 @@ def change():
     datetime_start = datetime.strptime(from_date, date_format)
 
 
+# Function for retrieving data
 def getData(symbol,multiplier,timespan,start, end, api_key):
     # API URL
     url = f"https://api.polygon.io/v2/aggs/ticker/{symbol}/range/{multiplier}/{timespan}/{start}/{end}"
@@ -64,6 +70,7 @@ def getData(symbol,multiplier,timespan,start, end, api_key):
 change()
 df1 = pd.read_excel("StockData4HR.xlsx")
 
+# Function for iteratively calling getData with increasing dates to bypass Polygon's low API limits
 for i in range(4):
     datetime_start = datetime_start + timedelta(days = numDaysFrom)
     print(datetime_start)
@@ -77,6 +84,7 @@ for i in range(4):
 
 #df1 = getData(symbol, multiplier, timespan, from_date, to_date, api_key)
 
+# Outputting data to excel
 output_file = "StockData4HR.xlsx"
 df1.to_excel(output_file, index=False)
 print(f"Data saved")
