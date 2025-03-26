@@ -1,3 +1,5 @@
+# Algorithm built in QuantConnect for backtesting my Reinforcement Learning using a daily Q Table
+
 # region imports
 from AlgorithmImports import *
 import pandas as pd
@@ -8,6 +10,7 @@ from io import StringIO
 
 class DancingBrownHippopotamus(QCAlgorithm):
 
+    # Initialize the data and a scheduled Backtest
     def initialize(self):
         self.set_start_date(2023, 9, 9)
         self.set_cash(100000)
@@ -27,6 +30,7 @@ class DancingBrownHippopotamus(QCAlgorithm):
         self.holding = False
         self.selling = False
 
+    # Retrieve EMA, SMA, and RSI data for the previous two days
     def UpdateEMAHistory(self):
         if self.ema.IsReady:
             self.previous_ema_values.append(self.ema.Current.Value)
@@ -45,9 +49,7 @@ class DancingBrownHippopotamus(QCAlgorithm):
         self.holding = False
         
 
-
-
-
+    # Function for retrieving my reinforcement learning model (the parameters from my q table)
     def GetStockData(self):
         try:
             df = pd.read_csv(StringIO(self.csv_content))
@@ -55,7 +57,8 @@ class DancingBrownHippopotamus(QCAlgorithm):
         except Exception as e:
             self.Debug(f"Error loading CSV: {str(e)}")
             return pd.DataFrame()
-    
+
+    # Function for parsing the excel data for the parameters from my q table into a dictionary
     def GenQTable(self):
         q_table = {}
         for i in range(len(self.df1)):
@@ -74,6 +77,8 @@ class DancingBrownHippopotamus(QCAlgorithm):
             q_table[tuple(status)] = actions
         return q_table
 
+    # Bulk of backtesting alorithm running each hour that plugs each current state into the parameters from my q table
+    # to determine buy, sell, and hold signals
     def OnHourlyInterval(self):
         
         if self.Portfolio[self.symbol].Quantity == 0:
