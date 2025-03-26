@@ -1,3 +1,8 @@
+# File for using a basic linear regression algorithm to predict stock buy and sell signals (the more advanced reinforcement
+# learning algorithm is in ReinforcementLearning.py
+
+# Commented out code is documentation of past tests
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -8,6 +13,8 @@ import terminalplot as tlp
 import matplotlib.pyplot as pplt
 
 
+# Function for performing Logistic Regression on 75% of my data and outputting predictions for the remaining 25%.
+# Handles multinomial (for sell, hold, and buy signals), and binomial data for only sell and buy signals
 def getPredictionBin(df, features_col, target, Multi, Prob, targetNames, size=0.25, randState=16):
     X = df[features_col]
     X_train, X_test, y_train, y_test = train_test_split(X, target, test_size = size, random_state = randState )
@@ -26,7 +33,8 @@ def getPredictionBin(df, features_col, target, Multi, Prob, targetNames, size=0.
         target_names = targetNames
         print(classification_report(y_test, y_pred, target_names=target_names))
         return y_pred
-    
+
+# Function for printing predictions on my data set
 def printPrediction(y_pred, Prob):
     if(Prob):
         for i in range(len(y_pred[0])):
@@ -34,6 +42,7 @@ def printPrediction(y_pred, Prob):
     else:
         print(y_pred)
 
+# Function for outputting my predictions to excel
 def addToExcel(filePath, columnName, y_pred, Prob):
     df = pd.read_excel(filePath)
     if(Prob):
@@ -57,15 +66,21 @@ feature = ["NDMA"]
 y = df.BUYBIN # Target variable
 y2 = df.BuyProb
 
-
+# Binomial and Multinomial targets
 targets = ["Sell", "Buy"]
 targets2 = ["Sell", "Moderate Sell", "Moderate Buy", "Buy"]
 
+
+# Following commented out code is for performing and documenting different tests that were successful and that I wanted to 
+# keep along with code for dispalying data and calculating accuracy
+
+# Getting different y_predictions using different features and multinomial/binomial targets (for testing)
 # y_pred = getPredictionBin(df, feature, y, False, False, targets)
 # y_pred3 = getPredictionBin(df, feature_cols, y, False, True, targets)
 # y_pred2 = getPredictionBin(df, feature_cols, y2, True, False, targets2)
 # y_pred4 = getPredictionBin(df, feature_cols, y2, True, True, targets2)
 
+# Adding predictions to excel
 # addToExcel("PredictedStocks.xlsx", "BinaryPredictions", y_pred, False)
 # addToExcel("PredictedStocks.xlsx", "BinaryProbPredictions", y_pred3, True)
 # addToExcel("PredictedStocks.xlsx", "MultiPredictions", y_pred2, False)
@@ -85,12 +100,14 @@ targets2 = ["Sell", "Moderate Sell", "Moderate Buy", "Buy"]
 
 # data = df3["Close"]
 
+# Graphing results
 # plt.plot(data)
 # for i in range(len(data)):
 #     if(df3["BinaryPredictions"][i] > 0):
 #         plt.plot([i+1], [data[i]], color = 'green')
 
 
+# Getting data for graphing
 data = df['Close'][:len(df)//20]
 min = df['RelMin'][:len(df)//20]
 
@@ -110,7 +127,9 @@ min = df['RelMin'][:len(df)//20]
 # cema = df["CEMA"][:len(df)//10]
 # dma = df["DMA"][:len(df)//20]
 
+# Graphing normal stock data
 plt.plot(data)
+
 # plt.plot(dma)
 # plt.plot(zero)
 # plt.plot(data2)
@@ -119,6 +138,8 @@ plt.plot(data)
 #plt.plot(d1)
 #plt.plot(d2, color = "red")
 #plt.plot(zero)
+
+# Graphing data to visualize where my ML Algo outputs buy and sell signals
 for i in range(len(data)):
     if((min[i]>0)):
         plt.plot([i],[data[i]], color = 'green')
@@ -133,13 +154,15 @@ for i in range(len(data)):
 # plt.ylabel("Stock Price $")
 
 
-
+# Display Graph
 plt.show()
 
 
 
 
 
+
+# Commented out code for performing analysis on accuracy
 
 
 # split X and y into training and testing sets
