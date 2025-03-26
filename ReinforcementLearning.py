@@ -1,3 +1,6 @@
+# File for performing a simple Q Reinforcement Learning algorithm. I have another file with an upgraded more advanced 
+# reinforcement learning that is currently Private.
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,9 +9,13 @@ import random
 action_count = 3
 q_table = {}
 
+# I have a low gamma value due to each state being relatively independent (my more advanced algorithm makes the states more 
+# dependent and uses a higher gamma value. My alpha value is dynamic, starting high and then dropping off during testing.
 alpha = 0.3
 gamma = 0.1
 epsilon = 0.1
+
+# Retrieving stock data
 df = pd.read_excel("/Users/gabrielhaskell/Documents/Personal/StockData3.xlsx")
 df3 = pd.read_excel("/Users/gabrielhaskell/Documents/Personal/Stockx.xlsx")
 df4 = pd.read_excel("/Users/gabrielhaskell/Documents/Personal/PolygonStocks.xlsx")
@@ -16,7 +23,7 @@ df5 = pd.read_excel("/Users/gabrielhaskell/Documents/Personal/StockDataMSFT.xlsx
 #Can have prev_action be apart of state and if in buy state can decide whether to buy more or hold or sell
     
 
-    
+# Retrieve the current state consisting of technical indicators on a particular day 
 def getState(n,df1):
     state = []
     state.append(df1["RLMD1"][n])
@@ -29,6 +36,7 @@ def getState(n,df1):
     state.append(df1["RLOC"][n])
     return tuple(state)
 
+# Reward function for calculating reward (tuned by testing the algorithm in BacktestNotebook)
 def calcReward(action, n, df1):
     price_init = df1["Close"][n]
     price_next = df1["Close"][n+1]
@@ -81,7 +89,8 @@ def calcReward(action, n, df1):
 
 
 
-
+# Function for training the algorithm. Using the Q learning Bellman equation, it iterates through states (days) in the stock 
+# market while updating Q values in the Q table. Trained for 2000 times.
 def train():
     for i in range(2000):
         reward = 0
@@ -146,6 +155,7 @@ train()
 
 dataframe = {'State': [], 'Sell': [], 'Hold': [], 'Buy':[]}
 
+# Outputting the resulting parameters from the Q table to an excel file for testing and use
 for key in q_table:
     string = ""
     for num in key:
